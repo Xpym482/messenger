@@ -12,7 +12,9 @@ $data = json_decode(file_get_contents("php://input"));
 
 $username = $data->name;
 $password = $data->password;
+$userrealname = $data->realname;
 
-$user = new User($conn, $username, $password);
+$user = new User($conn, $username, $password, $userrealname);
 $user->hashPassword();
-$user->userLogin();
+//$user->userRegister();
+$user->compareUsers();
