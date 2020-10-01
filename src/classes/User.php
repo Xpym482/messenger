@@ -1,5 +1,7 @@
 <?php
 
+require_once "Verification.php";
+
 class User
 {
 
@@ -65,7 +67,7 @@ class User
         $this->username = $username;
     }
 
-    public function userLogin()
+    public function userLogin() : void
     {
         $params = [':username' => $this->username];
 
@@ -74,7 +76,8 @@ class User
         $user = $stmt->fetch();
         if (!empty($user)) {
             if (password_verify($this->password, $user['Password'])) {
-                echo json_encode(['message' => 'Successful login.']);
+                $token = Verification::createJWT();
+                echo json_encode(['message' => 'Successful login.', 'JWT' => $token]);
             } else {
                 http_response_code(401);
                 echo json_encode(['message' => 'Password incorrect']);
@@ -85,14 +88,13 @@ class User
         }
     }
 
-    public function userRegister()
+    public function userRegister() : void
     {
         $params = [':email' => $this->email, ':password' => password_hash($this->password, PASSWORD_DEFAULT), ':username' => $this->username];
 
         if ($this->checkUser()) {
             $stmt = $this->db->prepare('INSERT INTO USERS (Email, Password, Username) VALUES (:email, :password, :username)');
             if ($stmt->execute($params)) {
-                http_response_code(401);
                 echo json_encode(['status' => true, 'message' => 'Successful registration']);
             } else {
                 http_response_code(401);
@@ -104,7 +106,7 @@ class User
         }
     }
 
-    public function checkUser()
+    public function checkUser() : bool
     {
         $stmt = $this->db->prepare('SELECT * FROM USERS WHERE Username = :username');
         $stmt->execute(array(':username' => $this->username));
