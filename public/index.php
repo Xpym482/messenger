@@ -1,13 +1,7 @@
 <?php
-    require '../src/User.php';
-
-
-
-//    if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['password']) && !empty($_POST['password'])) {
-//        $email = filter_input(INPUT_POST, 'email');
-//        $password = filter_input(INPUT_POST, 'password');
-//        $user->userLogin($email, $password);
-//    }
+    require_once '../src/classes/User.php';
+    require_once '../src/classes/Router.php';
+    require_once '../src/routing/router.php';
 ?>
 
 <!doctype html>
