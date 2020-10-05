@@ -2,8 +2,10 @@
 
 class Router {
 
-    private array $methods = ['POST', 'GET'];
-    private array $paths = ['/', 'register', 'login', 'messenger'];
+    private array $methodsPaths =
+        ['POST' => ['/register', '/login'],
+            'GET' => ['/', '/messenger']
+        ];
     private string $requestPath;
     private object $request;
 
@@ -11,33 +13,42 @@ class Router {
     {
         list($path, $callback) = $args;
 
-        if($_SERVER['REQUEST_METHOD'] !== strtoupper($name) || !in_array($_SERVER['REQUEST_METHOD'], $this->methods)){
-            http_response_code(405);
-            exit;
+        if(!in_array($_SERVER['REQUEST_METHOD'], array_keys($this->methodsPaths))) {
+            return;
         }
 
-        if($_SERVER['REQUEST_URI'] !== $path || !in_array($_SERVER['REQUEST_URI'], $this->paths)){
-            http_response_code(404);
-            exit;
+        if(array_search($path, $this->methodsPaths[$_SERVER['REQUEST_METHOD']]) === false){
+            return;
         }
+
+        $this->requestPath = $path;
+        $this->request = $callback;
 
         switch ($_SERVER['REQUEST_METHOD']){
             case 'POST':
-                $this->Post();
+                $this->sendData();
                 break;
             case 'GET':
-                $this->Get();
+                $this->getData();
                 break;
         }
     }
 
-    public function Post(){
-        //toDo Implement post
+    public function sendData(){
+        switch ($this->requestPath){
+            case '/login':
+                //ToDo login User
+            case '/register':
+                //ToDO register User
+        }
     }
 
-    public function Get(){
-        //toDo Implement get
+    public function getData(){
+        if ($this->requestPath === '/'){
+            return;
+        }
 
+        // ToDo other cases
     }
 
     public function errorHandler(){
