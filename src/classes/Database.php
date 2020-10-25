@@ -12,7 +12,8 @@ class Database {
     ];
     public $conn;
 
-    public function dbConnect(){
+    public function dbConnect()
+    {
         $this->conn = new PDO("mysql:host=$this->host;dbname=$this->db;charset=utf8", $this->user, '', $this->opt);
         return $this->conn;
     }

@@ -2,53 +2,54 @@
 
 class Router {
 
-    private array $methodsPaths =
-        ['POST' => ['/register', '/login'],
-            'GET' => ['/', '/messenger']
-        ];
-    private string $requestPath;
-    private object $request;
+    private array $routes = array();
+    private string $serverPath;
+    private string $serverMethod;
+    private $request;
 
-    public function __call($name, $args)
+    public function __construct(IRequest $request){
+        $this->request = $request;
+    }
+
+    public function add(string $path, string $method, $closure)
     {
-        list($path, $callback) = $args;
+        $this->routes[$path] = ['method'=> strtoupper($method), 'function' => $closure];
+    }
 
-        if(!in_array($_SERVER['REQUEST_METHOD'], array_keys($this->methodsPaths))) {
-            return;
+    public function validateRequest()
+    {
+        $path = explode("?", $_SERVER['REQUEST_URI']);
+
+        $this->serverPath = $path[0];
+        $this->serverMethod = $_SERVER['REQUEST_METHOD'];
+
+        if(!in_array($this->serverPath, array_keys($this->routes)))
+        {
+          return;
+        } else {
+            $pathIndex = array_search($this->serverPath, array_keys($this->routes));
         }
 
-        if(array_search($path, $this->methodsPaths[$_SERVER['REQUEST_METHOD']]) === false){
-            return;
-        }
+        if($pathIndex === false) return;
+        if($this->serverMethod !== $this->routes[$this->serverPath]['method']) return;
 
-        $this->requestPath = $path;
-        $this->request = $callback;
-
-        switch ($_SERVER['REQUEST_METHOD']){
+        //ToDO rework switch or place it in Requst class
+        switch ($this->serverMethod)
+        {
             case 'POST':
-                $this->sendData();
+                $this->postData();
                 break;
             case 'GET':
                 $this->getData();
-                break;
         }
     }
 
-    public function sendData(){
-        switch ($this->requestPath){
-            case '/login':
-                //ToDo login User
-            case '/register':
-                //ToDO register User
-        }
+    public function postData(){
+        call_user_func($this->routes[$this->serverPath]['function'], $this->request);
     }
 
     public function getData(){
-        if ($this->requestPath === '/'){
-            return;
-        }
-
-        // ToDo other cases
+        call_user_func($this->routes[$this->serverPath]['Closure']);
     }
 
     public function errorHandler(){

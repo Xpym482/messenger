@@ -1,4 +1,6 @@
 <?php
+    require_once "../src/interfaces/IRequest.php";
+    require_once "../src/classes/Request.php";
     require_once '../src/classes/User.php';
     require_once '../src/classes/Router.php';
     require_once '../src/routing/router.php';

@@ -1,15 +1,18 @@
 <?php
 
-$router = new Router();
+$router = new Router(new Request);
 
-$router->get('/', function () {
+$router->add('/', 'GET', function () {
     return;
 });
 
-$router->post('/login', function ($request) {
+$router->add('/login', 'POST', function ($request) {
+    $request->getBody();
     // ToDo send data for logging in
 });
 
-$router->post('/register', function ($request) {
+$router->add('/register', 'POST', function ($request) {
     // ToDo send data for register
 });
+
+$router->validateRequest();
