@@ -7,7 +7,8 @@ $router->add('/', 'GET', function () {
 });
 
 $router->add('/login', 'POST', function ($request) {
-    $request->getBody();
+    $body = $request->getBody();
+    echo $body->test;
     // ToDo send data for logging in
 });
 
